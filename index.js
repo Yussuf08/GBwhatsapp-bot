@@ -1,23 +1,27 @@
-require('dotenv').config();
-const express = require('express');
-const axios = require('axios');
+require("dotenv").config();
+const express = require("express");
+const axios = require("axios");
 const app = express();
-
 app.use(express.json());
 
-app.post('/webhook', async (req, res) => {
-  const message = req.body.message?.textMessageData?.textMessage;
-  const sender = req.body.senderData?.chatId;
+app.post("/webhook", async (req, res) => {
+  const body = req.body;
 
-  if (message && sender) {
-    try {
-      await axios.post(`https://api.green-api.com/waInstance${process.env.INSTANCE_ID}/sendMessage/${process.env.TOKEN}`, {
-        chatId: sender,
-        message: `Сәлем! Сіз жіберген: "${message}"`
-      });
-    } catch (error) {
-      console.error('Жіберу кезінде қате:', error.message);
+  try {
+    const message = body.messageData?.textMessageData?.textMessage;
+    const chatId = body.senderData?.chatId;
+
+    if (message && chatId) {
+      await axios.post(
+        `https://api.green-api.com/waInstance${process.env.INSTANCE_ID}/sendMessage/${process.env.TOKEN}`,
+        {
+          chatId: chatId,
+          message: `✅ Сәлем! Сіздің хабарыңыз: "${message}"`,
+        }
+      );
     }
+  } catch (error) {
+    console.error("Хабарлама жіберуде қате:", error.message);
   }
 
   res.sendStatus(200);
