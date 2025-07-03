@@ -6,21 +6,20 @@ const app = express();
 app.use(express.json());
 
 app.post("/webhook", async (req, res) => {
-  const messageData = req.body.messageData;
-  const message = messageData?.textMessage;
   const chatId = req.body.senderData?.chatId;
+  const message = req.body.messageData?.textMessage || "Хабарлама анықталмады";
 
-  if (message && chatId) {
+  if (chatId) {
     try {
       await axios.post(
         `https://api.green-api.com/waInstance${process.env.INSTANCE_ID}/sendMessage/${process.env.TOKEN}`,
         {
           chatId: chatId,
-          message: `Сәлем! Сен жаздың: ${message}`,
+          message: `🤖 Менің автоматты жауабым: ${message}`,
         }
       );
     } catch (error) {
-      console.error("Қате шықты:", error.message);
+      console.error("Жіберу қатесі:", error.message);
     }
   }
 
